@@ -64,7 +64,7 @@ def run_accessibility_check(
         })
 
         # 4. 导出所有报告
-        export_all(final_violations, page_name, page)
+        export_all(final_violations, page_name, page.url)
         logger.info(f"Check finished: {page_name} | Issues: {len(final_violations)}")
 
         # 5. Allure报告展示
