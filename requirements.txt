@@ -1,0 +1,19 @@
+# Playwright 核心
+playwright>=1.40.0
+pytest-playwright>=0.4.3
+
+# Pytest 基础
+pytest>=7.4.0
+pytest-rerunfailures>=14.0
+
+# 无障碍测试 axe
+axe-playwright>=0.2.0
+
+# PDF 报告
+fpdf2>=2.7.5
+
+# Allure 报告
+allure-pytest>=2.13.2
+
+# 工具类
+python-dotenv>=1.0.0

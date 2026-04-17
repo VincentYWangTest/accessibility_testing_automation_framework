@@ -1,0 +1,15 @@
+# 自动生成的报告/日志/截图
+logs/
+reports/
+screenshots/
+allure-results/
+
+# 依赖与环境
+__pycache__/
+.pytest_cache/
+venv/
+.env
+
+# 系统文件
+.DS_Store
+*.log
