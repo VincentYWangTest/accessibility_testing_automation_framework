@@ -53,5 +53,7 @@ COLORS = {
     "minor": HexColor("#6c757d"),
     "title": HexColor("#2c3e50"),
     "text": HexColor("#333333"),
+    "border": HexColor("#e9ecef"),
+    "standard": HexColor("#0056b3"),
     "success": HexColor("#28a745"),
 }
