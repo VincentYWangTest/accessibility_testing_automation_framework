@@ -15,7 +15,8 @@ if __name__ == "__main__":
     print("✅ Running accessibility tests...")
 
     # 运行测试（无视失败状态，只关心是否执行成功）
-    subprocess.run(["pytest", "tests/", "-v", "--alluredir=allure-results"])
+    # subprocess.run(["pytest", "tests/", "-m","saucedemo","-v", "--alluredir=allure-results"])
+    subprocess.run(["pytest", "tests/","-v", "--alluredir=allure-results"])
 
     # 打开报告
     try:

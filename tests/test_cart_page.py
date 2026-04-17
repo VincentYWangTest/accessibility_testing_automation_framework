@@ -6,6 +6,7 @@ from core.common_test import run_accessibility_check
 
 @allure.epic("Accessibility Testing")
 @allure.feature("Cart Page")
+@pytest.mark.saucedemo
 class TestCartPage:
     def test_cart_page_accessibility(self, page, test_config, only_critical, warn_only):
         login_page = LoginPage(page)

@@ -23,3 +23,7 @@ Create a new config file in config/ or add directly to the existing config:
 2. Create a New Test File
 Copy one of the existing test files in the tests/ folder, e.g.:
 tests/test_new_site.py
+
+How to Run
+pytest -m baidu -v --alluredir=allure-results
+allure open allure-report  

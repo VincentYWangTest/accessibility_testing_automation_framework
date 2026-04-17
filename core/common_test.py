@@ -84,6 +84,7 @@ def run_accessibility_check(
                 detail_text += f"Impact: {v['impact'].upper()}\n"
                 detail_text += f"Description: {v['description']}\n"
                 detail_text += f"Fix Suggestion: {v['help']}\n\n"
+                
             if detail_text:
                 allure.attach(detail_text, name="Issue Details", attachment_type=allure.attachment_type.TEXT)
             else:
