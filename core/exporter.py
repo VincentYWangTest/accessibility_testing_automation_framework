@@ -23,13 +23,18 @@ def export_all(violations, page_name, page_url):
     base = f"reports/{page_name}_{ts}"
     stats = calc_stats(violations)
 
-    build_csv(violations, page_name, page_url, stats, f"{base}.csv")
-    build_html(violations, page_name, page_url, stats, f"{base}.html")
-    build_excel(violations, page_name, page_url, stats, f"{base}.xlsx")
+    #===========CN report==========#
+
+    # build_csv(violations, page_name, page_url, stats, f"{base}.csv")
+    # build_html(violations, page_name, page_url, stats, f"{base}.html")
+    # build_excel(violations, page_name, page_url, stats, f"{base}.xlsx")
+    # build_pdf_cn(violations, page_name, page_url, stats, f"{base}_cn.pdf")
+
+    #===========EN report==========#
+
     build_csv_en(violations, page_name, page_url, stats, f"{base}_en.csv")
     build_html_en(violations, page_name, page_url, stats, f"{base}_en.html")
     build_excel_en(violations, page_name, page_url, stats, f"{base}_en.xlsx")
-    build_pdf_cn(violations, page_name, page_url, stats, f"{base}_cn.pdf")
     build_pdf_en(violations, page_name, page_url, stats, f"{base}_en.pdf")
 
     print(f"\n✅ 5 种报告已生成：{base}.*\n")

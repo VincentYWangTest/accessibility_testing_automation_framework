@@ -6,7 +6,6 @@ from core.utils import Utils
 
 logger = get_logger()
 
-# 新增：全局统计（用于生成总览报告）
 global_stats = {
     "total_pages": 0,
     "total_issues": 0,
@@ -22,28 +21,22 @@ def run_accessibility_check(
     page_name, 
     test_config, 
     only_critical,
-    warn_only=False  # 新增：warn only，只报警告，不阻断用例
+    warn_only=False
 ):
     global global_stats
     global_stats["total_pages"] += 1
     logger.info(f"=== Start accessibility check for: {page_name} ===")
 
     try:
-        # 执行无障碍扫描
         results = scan_accessibility(page)
         all_violations = results.get("violations", [])
 
-        # 1. 过滤忽略规则
+        # 过滤忽略规则和级别
         ignored = test_config.get("ignore_rules", [])
         filtered_violations = [v for v in all_violations if v["id"] not in ignored]
+        final_violations = [v for v in filtered_violations if v["impact"] == "critical"] if only_critical else filtered_violations
 
-        # 2. 过滤缺陷级别
-        if only_critical:
-            final_violations = [v for v in filtered_violations if v["impact"] == "critical"]
-        else:
-            final_violations = filtered_violations
-
-        # 3. 统计更新
+        # 统计更新
         critical_cnt = len([v for v in final_violations if v["impact"] == "critical"])
         serious_cnt = len([v for v in final_violations if v["impact"] == "serious"])
         moderate_cnt = len([v for v in final_violations if v["impact"] == "moderate"])
@@ -63,11 +56,10 @@ def run_accessibility_check(
             "minor": minor_cnt
         })
 
-        # 4. 导出所有报告
         export_all(final_violations, page_name, page.url)
         logger.info(f"Check finished: {page_name} | Issues: {len(final_violations)}")
 
-        # 5. Allure报告展示
+        # Allure报告：重点补充CSS Selector
         with allure.step(f"Accessibility Check: {page_name}"):
             mode_text = "CRITICAL ONLY" if only_critical else "ALL ISSUES"
             summary = (
@@ -77,33 +69,52 @@ def run_accessibility_check(
             )
             allure.attach(summary, name="Summary", attachment_type=allure.attachment_type.TEXT)
 
-            # 详细缺陷
+            # 详细缺陷：仅保留CSS Selector（满足debug定位）
             detail_text = ""
             for idx, v in enumerate(final_violations, 1):
                 detail_text += f"[{idx}] ID: {v['id']}\n"
                 detail_text += f"Impact: {v['impact'].upper()}\n"
                 detail_text += f"Description: {v['description']}\n"
-                detail_text += f"Fix Suggestion: {v['help']}\n\n"
+                detail_text += f"Fix Suggestion: {v['help']}\n"
+                
+                # 核心：提取axe原生的CSS选择器（debug直接用）
+                if "nodes" in v and len(v["nodes"]) > 0:
+                    detail_text += "Debug CSS Selectors:\n"
+                    for node_idx, node in enumerate(v["nodes"], 1):
+                        # axe的target字段是数组，第一个元素就是核心CSS选择器
+                        css_selector = node.get("target", ["N/A"])[0] if node.get("target") else "N/A"
+                        # 补充失败摘要（辅助定位，比如元素文本）
+                        failure_summary = node.get("failureSummary", "N/A")
+                        detail_text += f"  [{node_idx}] CSS: {css_selector}\n"
+                        detail_text += f"     Failure Info: {failure_summary}\n"
+                
+                # WCAG level
+                wcag_level = []
+                for t in v.get('tags', []):
+                    if t in ["wcag2a","wcag21a"]: wcag_level.append("A")
+                    elif t in ["wcag2aa","wcag21aa"]: wcag_level.append("AA")
+                    elif t in ["wcag2aaa","wcag21aaa"]: wcag_level.append("AAA")
+                wcag = "/".join(sorted(set(wcag_level))) if wcag_level else "Best Practice"
+                detail_text += f"WCAG Level: {wcag}\n"
+                
+                detail_text += "\n"  # 分隔不同违规项
                 
             if detail_text:
-                allure.attach(detail_text, name="Issue Details", attachment_type=allure.attachment_type.TEXT)
+                allure.attach(detail_text, name="Issue Details (with CSS)", attachment_type=allure.attachment_type.TEXT)
             else:
                 allure.attach("No accessibility issues found", name="Issue Details", attachment_type=allure.attachment_type.TEXT)
 
-            # 页面截图（无论成败都截图）
+            # 页面截图（配合CSS定位更直观）
             screenshot_path = Utils.take_screenshot(page, page_name, suffix="check")
             allure.attach.file(screenshot_path, name=f"{page_name} Screenshot", attachment_type=allure.attachment_type.PNG)
 
-        # 6. 控制：warn only 不阻断用例
         if final_violations and not warn_only:
             from pytest import fail
             fail(f"{page_name} has {len(final_violations)} accessibility issues", pytrace=False)
 
     except Exception as e:
-        # 全局异常捕获，不崩框架，记录日志+截图
         error_msg = f"Accessibility check failed for {page_name}: {str(e)}"
         logger.error(error_msg, exc_info=True)
-        # 异常截图
         screenshot_path = Utils.take_screenshot(page, page_name, suffix="error")
         allure.attach.file(screenshot_path, name=f"{page_name} Error Screenshot", attachment_type=allure.attachment_type.PNG)
         allure.attach(error_msg, name="Error Details", attachment_type=allure.attachment_type.TEXT)
@@ -111,7 +122,6 @@ def run_accessibility_check(
             from pytest import fail
             fail(error_msg, pytrace=False)
 
-# 新增：生成总览统计大盘
 def generate_summary_dashboard():
     export_dashboard(global_stats)
     logger.info("Summary dashboard generated: reports/dashboard.html")

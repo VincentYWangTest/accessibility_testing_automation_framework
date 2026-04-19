@@ -9,7 +9,7 @@ def scan_accessibility(page):
             values: ['wcag2a', 'wcag2aa', 'section508']
         }
     })""")
-
+    # print(results)
     return results
 
 def get_critical_issues(results):

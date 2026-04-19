@@ -1,5 +1,5 @@
 from datetime import datetime
-from .base import STANDARDS_EN, DISCLAIMER_EN  # 需提前定义英文标准/免责声明
+from .base import STANDARDS_EN, DISCLAIMER_EN
 
 def build_html_en(violations, page_name, page_url, stats, path):
     html = f'''<!DOCTYPE html>
@@ -23,13 +23,16 @@ h2{{font-size:18px;color:#2c3e50;margin-bottom:15px}}
 .issue{{background:#f9f9f9;padding:18px;border-radius:8px;margin-bottom:12px;border-left:4px solid #ccc}}
 .issue.critical{{border-color:#dc3545}}.issue.serious{{border-color:#fd7e14}}
 .issue.moderate{{border-color:#ffc107}}.issue.minor{{border-color:#6c757d}}
-.disclaimer{{background:#fff8e6;padding:20px;border-radius:8px;margin-top:20px;white-space:pre-line}}
-.footer{{text-align:center;padding:20px;color:#999}}
+.selector-group{{margin-top:10px;}}
+.selector-label{{font-weight:bold;margin-bottom:5px;display:block}}
+.selector-item{{background:#f0f5ff;padding:8px 12px;border-radius:4px;font-family:Consolas,monospace;overflow-x:auto;word-break:break-all;margin-top:4px}}
+.wcag{{color:#0066cc;font-weight:bold;margin-top:6px}}
+.disclaimer{{background:#fff8e6;padding:20px;border-radius:8px;margin-top:20px}}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="header"><h1>Website Accessibility Compliance Report</h1><p>Commercial Delivery Version</p></div>
+<div class="header"><h1>Website Accessibility Compliance Report</h1></div>
 <div class="info">
 <p>Page: {page_name}</p>
 <p>URL: {page_url}</p>
@@ -48,16 +51,38 @@ h2{{font-size:18px;color:#2c3e50;margin-bottom:15px}}
 </div>
 <div class="section"><h2>Issue Details</h2>
 '''
-    # 缺陷明细
-    for idx, v in enumerate(violations, 1):
+    for idx, violation in enumerate(violations, 1):
+        nodes = violation.get('nodes', [])
+        selectors = []
+        for node in nodes:
+            target = node.get('target', [])
+            selectors.extend(target)
+        unique_selectors = list(set(selectors)) if selectors else ['No element selector found']
+        
+        # WCAG 直接计算
+        tags = violation.get('tags', [])
+        wcag_level = []
+        for t in tags:
+            if t in ["wcag2a", "wcag21a"]:
+                wcag_level.append("A")
+            elif t in ["wcag2aa", "wcag21aa"]:
+                wcag_level.append("AA")
+            elif t in ["wcag2aaa", "wcag21aaa"]:
+                wcag_level.append("AAA")
+        wcag = "/".join(sorted(list(set(wcag_level)))) if wcag_level else "Best Practice"
+        
         html += f'''
-<div class="issue {v['impact']}">
-<h3>{idx}. {v['id']}【{v['impact'].upper()}】</h3>
-<p><strong>Description:</strong> {v['description']}</p>
-<p><strong>Recommendation:</strong> {v['help']}</p>
+<div class="issue {violation['impact']}">
+<h3>{idx}. {violation['id']}【{violation['impact'].upper()}】</h3>
+<p class="wcag">WCAG Level: {wcag}</p>
+<p><strong>Description:</strong> {violation['description']}</p>
+<p><strong>Recommendation:</strong> {violation['help']}</p>
+<div class="selector-group">
+<span class="selector-label">Affected Element Selectors:</span>
+{''.join([f'<div class="selector-item">{sel}</div>' for sel in unique_selectors])}
+</div>
 </div>
 '''
-    # 尾部
     html += f'''
 </div>
 <div class="disclaimer"><h3>Disclaimer</h3><p>{DISCLAIMER_EN}</p></div>
