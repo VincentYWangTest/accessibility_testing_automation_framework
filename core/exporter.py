@@ -32,9 +32,9 @@ def export_all(violations, page_name, page_url):
 
     #===========EN report==========#
 
-    build_csv_en(violations, page_name, page_url, stats, f"{base}_en.csv")
-    build_html_en(violations, page_name, page_url, stats, f"{base}_en.html")
     build_excel_en(violations, page_name, page_url, stats, f"{base}_en.xlsx")
-    build_pdf_en(violations, page_name, page_url, stats, f"{base}_en.pdf")
+    # build_csv_en(violations, page_name, page_url, stats, f"{base}_en.csv")
+    # build_html_en(violations, page_name, page_url, stats, f"{base}_en.html")
+    # build_pdf_en(violations, page_name, page_url, stats, f"{base}_en.pdf")
 
-    print(f"\n✅ 5 种报告已生成：{base}.*\n")
+    print(f"\n✅ Report Generated：{base}.*\n")
