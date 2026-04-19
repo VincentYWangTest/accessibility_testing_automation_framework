@@ -1,4 +1,4 @@
-from pages.base_page import BasePage
+from pages.saucedemo.base_page import BasePage
 
 class CartPage(BasePage):
     def __init__(self, page):
