@@ -3,27 +3,22 @@ A professional, enterprise-grade accessibility testing framework based on **Play
 
 ## Features
 ✅ Page Object Model (POM)
-✅ Multi-environment support
-✅ WCAG 2.1 AA Compliance
-✅ 5 types of reports: HTML, PDF, CSV, JSON, Allure
-✅ Critical severity filter
-✅ Auto screenshot & logging
-✅ Windows/macOS compatible
+✅ wcag2a | wcag2aa | wcag21a | wcag21aa | section508 | EN-301-549
+✅ allure support
 
 ## Quick Start
 ```bash
 pip install -r requirements.txt
 playwright install
-python run.py
 
-How to Add a New Test Site / New Case
-1. Add a New Environment Config (Optional)
-Create a new config file in config/ or add directly to the existing config:
+How to add a new one
+1. Create a new config file under config folder and update __init__.py file
 
-2. Create a New Test File
-Copy one of the existing test files in the tests/ folder, e.g.:
-tests/test_new_site.py
+2. Create the new folder/files under pages
+
+3. Create the new folder/files under tests
+
 
 How to Run
-pytest -m baidu -v --alluredir=allure-results
-allure open allure-report  
+1. Use command "pytest tests/saucedemo/ -v --env saucedemo" and check reports under report folder 
+2. use command "allure open allure-report" if you want to check allure report  
