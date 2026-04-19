@@ -3,7 +3,7 @@ from config import get_config
 
 # 新增：自定义注解 - 只报警告，不阻断用例
 def pytest_addoption(parser):
-    parser.addoption("--env", default="saucedemo")
+    parser.addoption("--env", default="opensource")
     parser.addoption("--only-critical", action="store_true")
 
 # 新增：warn_only 注解

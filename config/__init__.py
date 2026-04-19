@@ -7,4 +7,4 @@ CONFIG_MAP = {
 }
 
 def get_config(env):
-    return CONFIG_MAP.get(env, OPEN_SOURCE_CONFIG)
+    return CONFIG_MAP.get(env)
