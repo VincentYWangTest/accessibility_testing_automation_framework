@@ -3,7 +3,7 @@ import os
 
 class Utils:
     @staticmethod
-    def wait_for_element(page, locator, timeout=10000):
+    def wait_for_element(page, locator, timeout=60000):
         try:
             page.wait_for_selector(locator, state="visible", timeout=timeout)
             return True

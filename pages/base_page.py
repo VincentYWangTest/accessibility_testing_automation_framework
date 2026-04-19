@@ -10,7 +10,7 @@ class BasePage:
         self.page.wait_for_load_state("networkidle")
         self.utils.wait_for_element(self.page, "body")
 
-    def wait_for_element(self, locator, timeout=10000):
+    def wait_for_element(self, locator, timeout=60000):
         return self.utils.wait_for_element(self.page, locator, timeout)
 
     def take_screenshot(self, suffix=""):

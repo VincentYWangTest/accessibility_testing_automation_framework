@@ -1,4 +1,4 @@
-from pages.opensource.base_page import BasePage
+from pages.base_page import BasePage
 
 class AdminPage(BasePage):
     def __init__(self, page):

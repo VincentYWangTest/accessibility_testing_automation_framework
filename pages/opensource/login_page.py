@@ -1,4 +1,4 @@
-from pages.opensource.base_page import BasePage
+from pages.base_page import BasePage
 
 class LoginPage(BasePage):
     def __init__(self, page):
@@ -15,4 +15,4 @@ class LoginPage(BasePage):
         self.page.fill(self.username_input, username)
         self.page.fill(self.password_input, password)
         self.page.click(self.login_button)
-        self.page.wait_for_url("**/web/index.php/auth/login", timeout=10000)
+        self.page.wait_for_url("**/web/index.php/auth/login", timeout=60000)

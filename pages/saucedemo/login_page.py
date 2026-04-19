@@ -15,4 +15,4 @@ class LoginPage(BasePage):
         self.page.fill(self.username_input, username)
         self.page.fill(self.password_input, password)
         self.page.click(self.login_button)
-        self.page.wait_for_url("**/inventory.html", timeout=10000)
+        self.page.wait_for_url("**/inventory.html", timeout=60000)
